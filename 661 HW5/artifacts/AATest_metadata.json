@@ -1,0 +1,133 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "info",
+						"type": "string"
+					}
+				],
+				"name": "Log",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "FailBuyBadFee",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "FailRemitBadFee",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "TestBuyRemit",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "TestHolderTransfer",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"661 HW5/tokenMgr.sol": "AATest"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"661 HW5/Address.sol": {
+			"keccak256": "0x4e28fd4d56739a8c52cea46290bca26bf73aea8170b17dbc364220324cfd116b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2897a2b9616455395b1a8012f1b777e66fdd7de1bb63ece197a480e9c9e8bd66",
+				"dweb:/ipfs/QmSNLtCVAPLmp4kbvLSEzXitj9r3jDQDAD7ePZeUmjPJ1F"
+			]
+		},
+		"661 HW5/ERC223.sol": {
+			"keccak256": "0x858c5e5160a5cd6b66db6253b0af4c6ea3ccca4e674091e14ca65100ef4532ab",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e872569a3f97418cb5b0c1f47ecda1bb6379c6fcd75062712fbed05f7c02ee5a",
+				"dweb:/ipfs/QmSe1q5FzAX7sUJ2TDyDS9NgmiisKMwzBDLtYPF7bz5frk"
+			]
+		},
+		"661 HW5/IERC223.sol": {
+			"keccak256": "0xcc02ff00d855b111693be7775d83133d9148e2b850332101e2d5f1a681ff4e70",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://18122d1f858786a1f0b7bae2ffdec5cb47c02f45011cc67f9a85a2a672d7614a",
+				"dweb:/ipfs/QmQNa32sgyhEJvsNdvXHhwyHmXNtM66LjN3Qfhw6wgRkYw"
+			]
+		},
+		"661 HW5/ownable.sol": {
+			"keccak256": "0x26cf4f890d57f4e61b8e5d31f097445886f47fa7fe47282f3303b3b05d41a315",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://de6c0d6cf17953c850484886b44f4de687a0a5e51767501e9295163168693ca3",
+				"dweb:/ipfs/QmUW139zX9hrSdA23jfUvYE3ppKaWj1qSV9pmvnHzwtDUE"
+			]
+		},
+		"661 HW5/safeMath.sol": {
+			"keccak256": "0xc2c83f15172492a0c496ac525b8196ee59af0ec6ada9dd4df41c7b5362ea923b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://912b2dc1abac8653bdc6c2cca5956a326f2525b701aef1acc32e4c64a51cb7d3",
+				"dweb:/ipfs/QmbqkrZ1LxJiqt92wmwvbeaCMPxKvTwYCtxANPjcmv4FFf"
+			]
+		},
+		"661 HW5/tokenMgr.sol": {
+			"keccak256": "0xb5d0b08f721881dd4e2ec347d9bc96722569bb077e162dba7f7f2d655fd287c2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fe7abf994628248d402354378e5282e29ed9a61e3d3090e7356903052e103d2e",
+				"dweb:/ipfs/QmY43J1uF3C988WVjkji4CputS8Q6a6APMwJu45yYxFNiG"
+			]
+		}
+	},
+	"version": 1
+}
