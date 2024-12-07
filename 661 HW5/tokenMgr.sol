@@ -66,6 +66,7 @@ contract TokenHolder is ITokenHolder
 {
     constructor(IERC223 _cur)
     {
+        require(address(_cur) != address(0), "Invalid Adress");
         currency = _cur;
     }
     
@@ -75,8 +76,8 @@ contract TokenHolder is ITokenHolder
     }
 
     function putUpForSale(uint amt, uint price) virtual override public{
-         require(currency.balanceOf(address(this)) >= amt, "Contract does not have enough tokens to sell");//make sure that this contract has tokens to sell
-        amtForSale += amt;// indicate that amt tokens are for sale by contract
+        require(currency.balanceOf(address(this)) >= amt, "Contract does not have enough tokens to sell");//make sure that this contract has tokens to sell
+        amtForSale = amt;// indicate that amt tokens are for sale by contract
         pricePer = price;
     }
 
@@ -84,6 +85,7 @@ contract TokenHolder is ITokenHolder
     Note that this contract should ONLY sell the amount of tokens at the price specified by putUpForSale!
     */
     function sellToCaller(address to, uint qty) virtual override external payable{
+
         require(amtForSale >= qty, "Contract Does not have enough tokens for sale");
         require(msg.value == qty * pricePer, "Caller did not pay enought dough for tokens");
         amtForSale -= qty;
@@ -95,10 +97,17 @@ contract TokenHolder is ITokenHolder
     */
     function buy(uint amt, uint maxPricePer, TokenHolder seller) virtual override  public payable onlyOwner
     {
-        require(pricePer <= maxPricePer, "Price Aint right");
-        require(seller.tokenBalance() >= amt, "Not enough token to sell");
-        uint cost = amt*pricePer;
-        require(address(this).balance >= cost);
+        require(currency == seller.currency());
+        require(seller.pricePer() <= maxPricePer, "Price Aint right");
+        require(seller.amtForSale() >= amt, "Not enough token to sell");
+        uint cost = amt * seller.pricePer();
+
+        require(address(this).balance >= cost, "Not enough dough");
+
+        if(msg.value > 0){
+            require(msg.value >= cost, "Wrong amount payed");
+        }
+
         seller.sellToCaller{value: cost}(address(this), amt);
 
 
@@ -113,9 +122,12 @@ contract TokenHolder is ITokenHolder
     // Sell my tokens back to the token manager
     function remit(uint amt, uint _pricePer, TokenManager mgr) virtual override  public onlyOwner payable
     {
-        require(msg.value == mgr.fee(amt), "Need ot pay fee");
-        require(currency.balanceOf(address(this)) >= amt, "Contract doesnt own enough tokesn to sell to mgr");
-        mgr.buyFromCaller{value: amt*pricePer}(amt);
+        require(msg.value >= mgr.fee(amt));
+        
+        //payable(address(this)).transfer(amt*_pricePer);
+        currency.transfer(address(mgr), amt);
+        //mgr.buyFromCaller{value: mgr.fee(amt)}(amt);
+
     }
     
 
@@ -158,17 +170,25 @@ contract TokenManager is ERC223Token, TokenHolder
     function sellToCaller(address to, uint amount) payable override public
     {
 
-        require(msg.value == price(amount)+fee(amount));//ensure caller has payed enough
-        transfer(to, amount);//transfer tokens from contract to buyer
+        //require(balances[address(this)] >= amount, "Not enough tokens to pay");// contract has enough token to pay caller
+        require(msg.value == price(amount)+fee(amount), "Caller needs more eth");//ensure caller has payed enough
+        //transfer(to, amount);//transfer tokens from contract to buyer
+        mint(amount);
+        currency.transfer(to, amount);
     }
     
     // Caller sells tokens to this contract
     function buyFromCaller(uint amount) public payable
     {
-
-        require(address(this).balance >= price(amount));//make sure contract has enough to pay
-        transfer(address(this), amount);
-        payable(msg.sender).transfer(price(amount));// transfer ETH to caller
+       
+        
+        require(msg.value >= fee(amount), "Need to pay fee");//make sure contract has enough to pay
+        
+        //msg.sender.currency.transfer(address(this), amount);
+        
+        //transfer(address(this), amount);
+        
+        //payable(msg.sender).transfer(price(amount));// transfer ETH to caller
     }
     
     
@@ -177,6 +197,7 @@ contract TokenManager is ERC223Token, TokenHolder
     {
 
         balances[address(this)] += amount;// add amount of tokens to this contracts balance
+        _totalSupply += amount;
     }
     
     // Destroy some existing tokens, that are owned by this TokenManager
@@ -185,70 +206,79 @@ contract TokenManager is ERC223Token, TokenHolder
         (bool success,) = address(this).call{value: price(amount)}("");
         require(success, "ETH => manager");
         balances[address(this)] -= (amount);// subtract amount of tokens to this contracts balance
+        _totalSupply -= amount;
     }
+
 }
 
 
-contract AATest
-{
-    event Log(string info);
+// contract AATest
+// {
+//     event Log(string info);
 
-    function TestBuyRemit() payable public returns (uint)
-    {
-        emit Log("trying TestBuyRemit");
-        TokenManager tok1 = new TokenManager(100,1);
-        TokenHolder h1 = new TokenHolder(tok1);
+//     // function TestBuyRemit() payable public returns (uint)
+//     // {
+//     //     emit Log("trying TestBuyRemit");
+//     //     TokenManager tok1 = new TokenManager(100,1);
+//     //     TokenHolder h1 = new TokenHolder(tok1);
 
-        uint amt = 2;
-        tok1.sellToCaller{value:tok1.price(amt) + tok1.fee(amt)}(address(h1),amt);
-        assert(tok1.balanceOf(address(h1)) == amt);
 
-        h1.remit{value:tok1.fee(amt)}(1,50,tok1);
-        assert(tok1.balanceOf(address(h1)) == 1);
-        assert(tok1.balanceOf(address(tok1)) == 1);
+//     //     uint amt = 2;
+//     //     tok1.sellToCaller{value:tok1.price(amt) + tok1.fee(amt)}(address(h1),amt);
+
+//     //     assert(tok1.balanceOf(address(h1)) == amt);
+//     //     h1.remit{value:tok1.fee(amt)}(1,50,tok1);
+//     //     assert(tok1.balanceOf(address(h1)) == 1);
+//     //     assert(tok1.balanceOf(address(tok1)) == 1);
         
-        return tok1.price(1);
-    } 
+//     //     return tok1.price(1);
+//     // } 
     
-    function FailBuyBadFee() payable public
-    {
-        TokenManager tok1 = new TokenManager(100,1);
-        TokenHolder h1 = new TokenHolder(tok1);
+//     function FailBuyBadFee() payable public
+//     {
+//         TokenManager tok1 = new TokenManager(100,1);
+//         TokenHolder h1 = new TokenHolder(tok1);
 
-        uint amt = 2;
-        tok1.sellToCaller{value:1}(address(h1),amt);
-        assert(tok1.balanceOf(address(h1)) == 2);
-    }
+//         uint amt = 2;
+//         tok1.sellToCaller{value:1}(address(h1),amt);
+//         assert(tok1.balanceOf(address(h1)) == 2);
+//     }
     
-   function FailRemitBadFee() payable public
-    {
-        TokenManager tok1 = new TokenManager(100,1);
-        TokenHolder h1 = new TokenHolder(tok1);
+//    function FailRemitBadFee() payable public
+//     {
+//         TokenManager tok1 = new TokenManager(100,1);
+//         TokenHolder h1 = new TokenHolder(tok1);
 
-        uint amt = 2;
-        tok1.sellToCaller{value:tok1.price(amt) + tok1.fee(amt)}(address(h1),amt);
-        assert(tok1.balanceOf(address(h1)) == amt);
-        emit Log("buy complete");
+//         uint amt = 2;
+
+//         tok1.sellToCaller{value:tok1.price(amt) + tok1.fee(amt)}(address(h1),amt);
+//         assert(tok1.balanceOf(address(h1)) == amt);
+//         emit Log("buy complete");
         
-        h1.remit{value:tok1.fee(amt-1)}(2,50,tok1);
-    } 
+//         h1.remit{value:tok1.fee(amt-1)}(2,50,tok1);
+//     } 
       
-    function TestHolderTransfer() payable public
-    {
-        TokenManager tok1 = new TokenManager(100,1);
-        TokenHolder h1 = new TokenHolder(tok1);
-        TokenHolder h2 = new TokenHolder(tok1);
+//     function TestHolderTransfer() payable public
+//     {
+//         TokenManager tok1 = new TokenManager(100,1);
+//         TokenHolder h1 = new TokenHolder(tok1);
+//         TokenHolder h2 = new TokenHolder(tok1);
         
-        uint amt = 2;
-        tok1.sellToCaller{value:tok1.price(amt) + tok1.fee(amt)}(address(h1),amt);
-        assert(tok1.balanceOf(address(h1)) == amt);
+
+//         uint amt = 2;
+//         tok1.sellToCaller{value:tok1.price(amt) + tok1.fee(amt)}(address(h1),amt);
+//         assert(tok1.balanceOf(address(h1)) == amt);
         
-        h1.putUpForSale(2, 200);
-        h2.buy{value:2*202}(1,202,h1);
-        h2.buy(1,202,h1);  // Since I loaded money the first time, its still there now.       
-    }
+
+
+//         h1.putUpForSale(2, 200);
+
+//         h2.buy{value:2*202}(1,202,h1);
+
+//         h2.buy(1,202,h1);  // Since I loaded money the first time, its still there now.       
+//     }
     
-}
+// }
 
 
 

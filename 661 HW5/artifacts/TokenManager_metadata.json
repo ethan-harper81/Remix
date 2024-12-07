@@ -543,11 +543,11 @@
 			]
 		},
 		"661 HW5/tokenMgr.sol": {
-			"keccak256": "0xb5d0b08f721881dd4e2ec347d9bc96722569bb077e162dba7f7f2d655fd287c2",
+			"keccak256": "0x136bc94f2b5290b8d97a9c9a8fcdeec5497965dc8093b36dc148a2a64a27ce29",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fe7abf994628248d402354378e5282e29ed9a61e3d3090e7356903052e103d2e",
-				"dweb:/ipfs/QmY43J1uF3C988WVjkji4CputS8Q6a6APMwJu45yYxFNiG"
+				"bzz-raw://46a4210091e69e35528623f8e733f99d3e1bee6e017163af2eb37c16ab98c787",
+				"dweb:/ipfs/QmXQXCoyjkgvnmGXncJ9uzWsbMZ5YhL9L7J9WGcZGWMvRk"
 			]
 		}
 	},

@@ -34,19 +34,6 @@
 			},
 			{
 				"inputs": [],
-				"name": "TestBuyRemit",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "TestHolderTransfer",
 				"outputs": [],
 				"stateMutability": "payable",
@@ -121,11 +108,11 @@
 			]
 		},
 		"661 HW5/tokenMgr.sol": {
-			"keccak256": "0xb5d0b08f721881dd4e2ec347d9bc96722569bb077e162dba7f7f2d655fd287c2",
+			"keccak256": "0xa3139b15087a4591e7e397762e03c24d5ad6c48653de170e8136322d226361a5",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://fe7abf994628248d402354378e5282e29ed9a61e3d3090e7356903052e103d2e",
-				"dweb:/ipfs/QmY43J1uF3C988WVjkji4CputS8Q6a6APMwJu45yYxFNiG"
+				"bzz-raw://645a8bfed058f5a0ac73aff41498de6071634ff98647e99ec4caa053c81c0652",
+				"dweb:/ipfs/QmdfFKZ95PCUBwiJ1uyVm75RaCF76WYCVfXLMjgG5vf4nD"
 			]
 		}
 	},
